@@ -108,11 +108,14 @@ describe('Router', function () {
 
           pattern = new Pattern('get', '/test');
           assert(pattern);
+          assert(pattern.method === 'get');
+          assert(pattern.path === '/test');
         }
       });
 
       it('path can have tokens', function () {
         var tokenizedPath = '/post/:id/comment/:commentId';
+  
       });
 
       it('must have a callback');
