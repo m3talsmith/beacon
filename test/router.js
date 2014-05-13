@@ -29,7 +29,7 @@ describe('Router', function () {
 
       assert(!findPattern('get'));
 
-      var pattern = router.add('get');
+      var pattern = router.add('get', '/test');
 
       assert(pattern);
       assert(pattern.method === 'get');
@@ -40,10 +40,34 @@ describe('Router', function () {
       assert(router.find);
       assert(router.find('get').length === 0);
 
-      var pattern = router.add('get');
+      var pattern = router.add('get', '/test');
 
       assert(router.find('get').length === 1);
       assert(router.find('get')[0] === pattern);
+    });
+
+    it('adds a pattern with #get', function () {
+      var pattern = router.get('/test');
+
+      assert(router.find('get')[0] === pattern); 
+    });
+
+    it('adds a pattern with #post', function () {
+      var pattern = router.post('/test');
+
+      assert(router.find('post')[0] === pattern); 
+    });
+
+    it('adds a pattern with #put', function () {
+      var pattern = router.put('/test');
+
+      assert(router.find('put')[0] === pattern); 
+    });
+
+    it('adds a pattern with #delete', function () {
+      var pattern = router.delete('/test');
+
+      assert(router.find('delete')[0] === pattern); 
     });
 
     describe('pattern', function () {
@@ -71,11 +95,21 @@ describe('Router', function () {
       });
 
       it('can have a method', function () {
-        pattern = new Pattern('get');
+        pattern = new Pattern('get', '/test');
         assert(pattern.method === 'get');
       });
 
-      it('must have a path');
+      it('must have a path', function () {
+        try {
+          pattern = new Pattern('get');
+          assert(false);
+        } catch (e) {
+          assert(e.message === 'pattern must have a path');
+
+          pattern = new Pattern('get', '/test');
+          assert(pattern);
+        }
+      });
 
       it('path can have tokens', function () {
         var tokenizedPath = '/post/:id/comment/:commentId';
