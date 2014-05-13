@@ -77,12 +77,12 @@ describe('Router', function () {
        *
        * {
        *   method: 'get',
-       *   path: '/post/:postId/comment/:id',
+       *   path: '/post/:id',
        *   callback: [Function],
        *   arguments: ['abc', 123, [Function], [Object]],
-       *   regexp: '/\/post\/(\:postId)\/comment\/(\:id)/',
-       *   fragments: ['post', ':postId', 'comment', ':id'],
-       *   attributes: ['postId', 'id'],
+       *   regexp: '/^\/post\/[a-zA-Z0-9-_~\\.%@]+$/',
+       *   fragments: ['post', ':id'],
+       *   attributes: ['id'],
        *   compileRegExp: [Function]
        * }
        *
@@ -113,9 +113,13 @@ describe('Router', function () {
         }
       });
 
-      it('path can have tokens', function () {
-        var tokenizedPath = '/post/:id/comment/:commentId';
+      it('tokenizes path', function () {
+        var tokenPath = '/post/:postId/comment/:id';
   
+        pattern = new Pattern('get', tokenPath);
+        assert(pattern.path === tokenPath);
+        assert(pattern.fragments.toString() === ['post', ':postId', 'comment', ':id'].toString());
+        assert(pattern.attributes.toString() === ['postId', 'id'].toString());
       });
 
       it('must have a callback');
