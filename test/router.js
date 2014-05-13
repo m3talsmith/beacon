@@ -1,6 +1,7 @@
-var mocha  = require('mocha'),
-    assert = require('assert'),
-    Router = require('../index');
+var mocha   = require('mocha'),
+    assert  = require('assert'),
+    Router  = require('../index'),
+    Pattern = require('../lib/pattern');
 
 describe('Router', function () {
   describe('#new', function () {
@@ -18,11 +19,62 @@ describe('Router', function () {
     });
 
     it('has patterns', function () {
+      assert(router.patterns);
+    });
 
+    it('adds a pattern', function () {
+      var findPattern = function (method) {
+        return router.patterns.filter(function(pattern){ return pattern.method === method; })[0];
+      };
+
+      assert(!findPattern('get'));
+
+      var pattern = router.add('get');
+
+      assert(pattern);
+      assert(pattern.method === 'get');
+      assert(findPattern('get'));
+    });
+
+    it('finds a pattern', function () {
+      assert(router.find);
+      assert(router.find('get').length === 0);
+
+      var pattern = router.add('get');
+
+      assert(router.find('get').length === 1);
+      assert(router.find('get')[0] === pattern);
     });
 
     describe('pattern', function () {
-      it('can have a method');
+
+      /* Pattern layout
+       * ==============
+       *
+       * {
+       *   method: 'get',
+       *   path: '/post/:postId/comment/:id',
+       *   callback: [Function],
+       *   arguments: ['abc', 123, [Function], [Object]],
+       *   regexp: '/\/post\/(\:postId)\/comment\/(\:id)/',
+       *   fragments: ['post', ':postId', 'comment', ':id'],
+       *   attributes: ['postId', 'id'],
+       *   compileRegExp: [Function]
+       * }
+       *
+       */
+
+      var pattern;
+
+      afterEach(function () {
+        pattern = null;
+      });
+
+      it('can have a method', function () {
+        pattern = new Pattern('get');
+        assert(pattern.method === 'get');
+      });
+
       it('must have a path');
 
       it('path can have tokens', function () {
@@ -33,9 +85,6 @@ describe('Router', function () {
       it('can have callback arguments');
       it('compiles the path to a regex');
     });
-
-    it('adds a pattern');
-    it('finds a pattern');
 
     describe('#find(method, path)', function () {
       it('finds by a method');
